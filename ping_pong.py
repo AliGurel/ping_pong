@@ -46,13 +46,22 @@ game = True
 FPS = 60
 clock = time.Clock()
 
+yatay_hiz = 3
+dikey_hiz = 3
+
+# Yazı taslakları
+font.init()
+yazi_taslagi = font.Font(None,40)
+lose1 = yazi_taslagi.render("1. OYUNCU KAYBETTİ!",True,(0,0,0))
+lose2 = yazi_taslagi.render("2. OYUNCU KAYBETTİ!",True,(0,0,0))
+
 # Oyun döngüsü
 while game:
     # Eğer çarpı işaretine basılırsa pencereyi kapa
     for e in event.get():
         if e.type == QUIT:
             game = False
-
+    pencere.fill((200,255,255))
     raket_sag.ciz()
     raket_sol.ciz()
     top.ciz()
@@ -60,11 +69,25 @@ while game:
     raket_sol.update_l()
     raket_sag.update_r()
 
-    
+    #topun hareketi
+    top.rect.x = top.rect.x + yatay_hiz
+    top.rect.y = top.rect.y + dikey_hiz
+
+    # topun alt ve üst duvardan sekmesi
+    if top.rect.y > 450 or top.rect.y < 0:
+        dikey_hiz = dikey_hiz * (-1)
+
+    # topun raketlerden sekmesi
+    if sprite.collide_rect(raket_sol,top) or sprite.collide_rect(raket_sag,top):
+        yatay_hiz = yatay_hiz * (-1)
+
+    # Kaybetme kontrolü
+    if top.rect.x < 0:
+        pencere.blit(lose1,(200,200))
+    if top.rect.x > 600:
+        pencere.blit(lose2,(200,200))
 
     # ekranı güncelle
     display.update()
     clock.tick(FPS)
-
-
 
